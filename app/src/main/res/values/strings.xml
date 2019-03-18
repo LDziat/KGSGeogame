@@ -15,4 +15,8 @@
     <string name="sign_in_label">GO!</string>
     <string name="register_label">Join</string>
     <string name="desc_geogame_logo">Geogame logo</string>
+    <string name="title_activity_home_screen">Kentucky State Park Name Here</string>
+    <string name="camera_button_label">camera button</string>
+    <string name="imageview">imageView</string>
+    <string name="camera_go_button">camera go button</string>
 </resources>
