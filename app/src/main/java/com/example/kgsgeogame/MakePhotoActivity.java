@@ -10,6 +10,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,6 +40,8 @@ public class MakePhotoActivity extends Activity {
     private int cameraId = 0;
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int IMAGE_CAPTURE = 102;
+    double longitude = 0;
+    double latitude = 0;
 
 
 
@@ -44,26 +50,46 @@ public class MakePhotoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_photo);
         if (checkPermission()) {
-            // do we have a camera?
-            if (!getPackageManager()
-                    .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
-                        .show();
-            } else {
-                cameraId = findFrontFacingCamera();
-                if (cameraId < 0) {
-                    Toast.makeText(this, "No front facing camera found.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    camera = Camera.open(cameraId);
-                    camera.startPreview();
-                }
-            }
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            TextView tv = (TextView) findViewById(R.id.tex_locat);
+            String lonLat = "Long: " + Double.toString(longitude) + " | Lat: " + Double.toString(latitude);
+            tv.setText(lonLat);
+            // Launch the camera as soon as this activity loads
+            //dispatchTakePictureIntent();
         }
         else{
             requestPermission();
         }
     }
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            TextView tv = (TextView) findViewById(R.id.tex_locat);
+            String lonLat = "Long: " + Double.toString(longitude) + " | Lat: " + Double.toString(latitude);
+            tv.setText(lonLat);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+//lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
 
     String mCurrentPhotoPath;
 
@@ -83,22 +109,22 @@ public class MakePhotoActivity extends Activity {
         return image;
     }
 
+    //onClick for the camera button
     public void onClick(View view) {
         try {
-            //if (takePictureIntent.resolveActivity(getPackageManager()) != null)
+            // Launch into the camera
             dispatchTakePictureIntent();
-
-            //Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            //startActivityForResult(pictureIntent, IMAGE_CAPTURE);
             }
         catch (Exception e){
+            // Display any exceptions
             Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
         }
 
     }
 
-    static final int REQUEST_TAKE_PHOTO = 1;
 
+    static final int REQUEST_TAKE_PHOTO = 1;
+    // This is the code to launch into the camera
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -122,6 +148,7 @@ public class MakePhotoActivity extends Activity {
             }
         }
     }
+    // This handles the result of the camera
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -148,32 +175,7 @@ public class MakePhotoActivity extends Activity {
             error.printStackTrace();
         }
     }
-
-    private int findFrontFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            CameraInfo info = new CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-                Log.d(DEBUG_TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
-
-    @Override
-    protected void onPause() {
-        if (camera != null) {
-            camera.release();
-            camera = null;
-        }
-        super.onPause();
-    }
-
+// This checks all of our permissions (Camera, External Storage, and Fine Location)
     private boolean checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -192,7 +194,7 @@ public class MakePhotoActivity extends Activity {
         }
         return true;
     }
-
+// This tries to get said permissions if they are not yet open
     private void requestPermission() {
 
         ActivityCompat.requestPermissions(this,
