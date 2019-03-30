@@ -9,15 +9,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1"
+        android:background="@color/mainColor"
         >
 
         <ImageView
             android:id="@+id/img_preview"
             android:layout_width="match_parent"
-            android:layout_height="599dp"
-            android:padding="32dp"
+            android:layout_height="0dp"
             android:visibility="visible"
-            android:layout_weight="0.98"/>
+            android:layout_weight="0.98"
+            android:background="@color/buttonFill"/>
 
 
         <ImageButton

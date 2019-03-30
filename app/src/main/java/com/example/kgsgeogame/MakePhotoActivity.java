@@ -65,22 +65,21 @@ public class MakePhotoActivity extends Activity {
         }
     }
 
-    String imageFilePath;
+    String mCurrentPhotoPath;
 
     private File createImageFile() throws IOException {
-        String timeStamp =
-                new SimpleDateFormat("yyyyMMdd_HHmmss",
-                        Locale.getDefault()).format(new Date());
-        String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir =
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
 
-        imageFilePath = image.getAbsolutePath();
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
@@ -96,9 +95,6 @@ public class MakePhotoActivity extends Activity {
             Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
         }
 
-        //camera.startPreview();
-        //camera.takePicture(null, null,
-                //new PhotoHandler(getApplicationContext()));
     }
 
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -112,6 +108,7 @@ public class MakePhotoActivity extends Activity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
+                Toast.makeText(this,ex.toString(),Toast.LENGTH_LONG).show();
                 // Error occurred while creating the File
             }
             // Continue only if the File was successfully created
@@ -120,6 +117,7 @@ public class MakePhotoActivity extends Activity {
                         "com.example.android.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Toast.makeText(this,photoURI.toString(),Toast.LENGTH_LONG).show();
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
@@ -131,11 +129,13 @@ public class MakePhotoActivity extends Activity {
             switch (requestCode) {
                 case 0: {
                     if (resultCode == RESULT_OK) {
-                        String currentPhotoPath = imageFilePath;
+                        String currentPhotoPath = mCurrentPhotoPath;
                         File file = new File(currentPhotoPath);
                         Bitmap bitmap = MediaStore.Images.Media
                                 .getBitmap(this.getContentResolver(), Uri.fromFile(file));
                         if (bitmap != null) {
+                            // TODO GO TO THE TAGGING THE IMAGE ACTIVITY
+                            // This will show the image, allow the user to select tags for the image, and describe the image
                             ImageView iv = (ImageView) findViewById(R.id.img_preview);
                             iv.setImageBitmap(bitmap);
                         }
@@ -176,6 +176,16 @@ public class MakePhotoActivity extends Activity {
 
     private boolean checkPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            return false;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            return false;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
             return false;
