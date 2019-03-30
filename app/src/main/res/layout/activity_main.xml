@@ -15,26 +15,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="479dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:background="@color/mainColor">
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/map_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".98"
             android:apiKey="@string/google_maps_key"
             android:background="@color/buttonStroke"
-            android:visibility="visible">
-        </com.google.android.gms.maps.MapView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="251dp"
-        android:layout_marginTop="480dp"
-        android:background="@color/common_google_signin_btn_text_light_disabled"
-        android:orientation="vertical"
-        android:visibility="visible">
+            android:visibility="visible"></com.google.android.gms.maps.MapView>
 
         <ImageButton
             android:id="@+id/cameraButton"
@@ -43,10 +36,13 @@
             android:layout_marginLeft="128dp"
             android:layout_marginTop="16dp"
             android:layout_marginRight="128dp"
+            android:layout_weight=".02"
             android:background="@drawable/kgs_style_button"
             android:contentDescription="@string/camera_button_label"
             android:padding="32dp"
             app:srcCompat="@android:drawable/ic_menu_camera" />
+
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

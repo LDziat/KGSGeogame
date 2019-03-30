@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         gmap = googleMap;
         gmap.setMinZoomPreference(12);
-        LatLng ny = new LatLng(40.7143528, -74.0059731);
-        gmap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        LatLng nb = new LatLng(37.772584, -83.6843577);
+        gmap.moveCamera(CameraUpdateFactory.newLatLng(nb));
     }
 
 
     public void openCamera(){
-        Intent intent = new Intent(this, cameraScreen.class);
+        Intent intent = new Intent(this, MakePhotoActivity.class);
         startActivity(intent);
     }
 
