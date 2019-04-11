@@ -32,7 +32,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MakePhotoActivity"></activity>
-        <activity android:name=".cameraScreen" />
         <activity android:name=".MainActivity" />
         <provider
             android:name="android.support.v4.content.FileProvider"

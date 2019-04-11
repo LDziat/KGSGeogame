@@ -7,41 +7,64 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1"
         android:background="@color/mainColor"
-        >
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/tex_locat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/img_preview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:visibility="visible"
             android:layout_weight="0.98"
-            android:background="@color/buttonFill"/>
+            android:background="@color/buttonFill"
+            android:visibility="visible" />
 
 
-        <ImageButton
-            android:id="@+id/captureFront"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="128dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="128dp"
-            android:layout_weight=".02"
-            android:onClick="onClick"
-            android:background="@drawable/kgs_style_button"
-            android:contentDescription="@string/camera_button_label"
-            android:padding="32dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            android:layout_weight=".2"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/captureFront"
+
+                android:layout_width="172dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="96dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/kgs_style_button"
+                android:contentDescription="@string/camera_button_label"
+                android:onClick="camOnClick"
+                android:padding="32dp"
+                android:visibility="visible"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
+
+            <ImageButton
+                android:id="@+id/submitButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="16dp"
+                android:background="@drawable/kgs_style_button"
+                android:contentDescription="@android:string/ok"
+                android:onClick="storeOnClick"
+                android:padding="32dp"
+                android:visibility="invisible"
+                app:srcCompat="@android:drawable/ic_menu_save" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

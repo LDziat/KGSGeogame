@@ -8,8 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,8 +21,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 
 public class MakePhotoActivity extends Activity {
@@ -110,19 +109,35 @@ public class MakePhotoActivity extends Activity {
     }
 
     //onClick for the camera button
-    public void onClick(View view) {
+    // This loads the camera
+    public void camOnClick(View view) {
         try {
             // Launch into the camera
             dispatchTakePictureIntent();
             }
         catch (Exception e){
             // Display any exceptions
-            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"CAN NOT TAKE PICTURE ERROR: " + e.toString(),Toast.LENGTH_LONG).show();
         }
-
     }
 
+    // This stores the picture into an album it internally keeps track of
+    public void storeOnClick(View view){
+        try{
+            picFile = new File(mCurrentPhotoPath);
+            PhotoAlbum.store(picFile);
+            openMainScreen();
+            Toast.makeText(this,"Saved to Album!",Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e){
+            Toast.makeText(this,"CAN NOT STORE PICTURE ERROR: " + e.toString(),Toast.LENGTH_LONG).show();
+        }
+    }
 
+    public void openMainScreen(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     static final int REQUEST_TAKE_PHOTO = 1;
     // This is the code to launch into the camera
     private void dispatchTakePictureIntent() {
@@ -148,30 +163,28 @@ public class MakePhotoActivity extends Activity {
             }
         }
     }
+    File picFile = null;
     // This handles the result of the camera
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        try {
-            switch (requestCode) {
-                case 0: {
-                    if (resultCode == RESULT_OK) {
-                        String currentPhotoPath = mCurrentPhotoPath;
-                        File file = new File(currentPhotoPath);
-                        Bitmap bitmap = MediaStore.Images.Media
-                                .getBitmap(this.getContentResolver(), Uri.fromFile(file));
-                        if (bitmap != null) {
-                            // TODO GO TO THE TAGGING THE IMAGE ACTIVITY
-                            // This will show the image, allow the user to select tags for the image, and describe the image
-                            ImageView iv = (ImageView) findViewById(R.id.img_preview);
-                            iv.setImageBitmap(bitmap);
-                        }
-                    }
-                    break;
-                }
-            }
 
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        try {
+            String currentPhotoPath = mCurrentPhotoPath;
+            picFile = new File(currentPhotoPath);
+            Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            if (bitmap != null) {
+                // TODO GO TO THE TAGGING THE IMAGE ACTIVITY
+                // This will show the image, allow the user to select tags for the image, and describe the image
+                ImageView iv = (ImageView) findViewById(R.id.img_preview);
+                iv.setImageBitmap(bitmap);
+                Toast.makeText(this, "Preview Loaded", Toast.LENGTH_LONG).show();
+                ImageButton subButton = (ImageButton) findViewById(R.id.submitButton);
+                subButton.setVisibility(View.VISIBLE);
+            }
         } catch (Exception error) {
+            Toast.makeText(this,"It looks like you didn't take a picture.",Toast.LENGTH_LONG).show();
             error.printStackTrace();
         }
     }

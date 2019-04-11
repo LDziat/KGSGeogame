@@ -20,6 +20,14 @@
         android:weightSum="1"
         android:background="@color/mainColor">
 
+        <TextView
+            android:id="@+id/trailLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@color/buttonFill"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse" />
+
         <com.google.android.gms.maps.MapView
             android:id="@+id/map_view"
             android:layout_width="match_parent"
